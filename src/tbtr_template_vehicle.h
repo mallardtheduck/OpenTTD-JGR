@@ -92,6 +92,7 @@ public:
 	bool keep_remaining_vehicles;
 	bool refit_as_template;
 	bool replace_old_only;
+	bool use_existing_only;
 
 	// Things derived from a virtual train
 	Owner owner;
@@ -134,6 +135,7 @@ public:
 		this->refit_as_template = true;
 		this->replace_old_only = false;
 		this->sprite_seq.count = 1;
+		this->use_existing_only = false;
 	}
 
 	~TemplateVehicle();
@@ -153,10 +155,12 @@ public:
 	bool IsSetKeepRemainingVehicles() const { return this->keep_remaining_vehicles; }
 	bool IsSetRefitAsTemplate() const { return this->refit_as_template; }
 	bool IsReplaceOldOnly() const { return this->replace_old_only; }
+	bool IsSetUseExistingOnly() const { return this->use_existing_only; }
 	void ToggleReuseDepotVehicles() { this->reuse_depot_vehicles = !this->reuse_depot_vehicles; }
 	void ToggleKeepRemainingVehicles() { this->keep_remaining_vehicles = !this->keep_remaining_vehicles; }
 	void ToggleRefitAsTemplate() { this->refit_as_template = !this->refit_as_template; }
 	void ToggleReplaceOldOnly() { this->replace_old_only = !this->replace_old_only; }
+	void ToggleUseExistingOnly() { this->use_existing_only = !this->use_existing_only; }
 
 	bool IsPrimaryVehicle() const { return this->IsFrontEngine(); }
 	inline bool IsFrontEngine() const { return HasBit(this->subtype, GVSF_FRONT); }

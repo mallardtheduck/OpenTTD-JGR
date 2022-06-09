@@ -79,6 +79,7 @@ enum TemplateReplaceWindowWidgets {
 	TRW_WIDGET_TMPL_BUTTONS_CONFIGTMPL_KEEP,
 	TRW_WIDGET_TMPL_BUTTONS_CONFIGTMPL_REFIT,
 	TRW_WIDGET_TMPL_BUTTONS_CONFIGTMPL_OLD_ONLY,
+	TRW_WIDGET_TMPL_BUTTONS_CONFIGTMPL_EXISTING_ONLY,
 	TRW_WIDGET_TMPL_BUTTONS_CONFIG_RIGHTPANEL,
 
 	TRW_WIDGET_TMPL_BUTTONS_DEFINE,
@@ -154,6 +155,7 @@ static const NWidgetPart _widgets[] = {
 			NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, TRW_WIDGET_TMPL_BUTTONS_CONFIGTMPL_KEEP), SetMinimalSize(150,12), SetResize(0,0), SetDataTip(STR_TMPL_SET_KEEPREMAINDERS, STR_TMPL_SET_KEEPREMAINDERS_TIP),
 			NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, TRW_WIDGET_TMPL_BUTTONS_CONFIGTMPL_REFIT), SetMinimalSize(150,12), SetResize(0,0), SetDataTip(STR_TMPL_SET_REFIT, STR_TMPL_SET_REFIT_TIP),
 			NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, TRW_WIDGET_TMPL_BUTTONS_CONFIGTMPL_OLD_ONLY), SetMinimalSize(150,12), SetResize(0,0), SetDataTip(STR_TMPL_SET_OLD_ONLY, STR_TMPL_SET_OLD_ONLY_TIP),
+			NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, TRW_WIDGET_TMPL_BUTTONS_CONFIGTMPL_EXISTING_ONLY), SetMinimalSize(150, 12), SetResize(0, 0), SetDataTip(STR_TMPL_SET_EXISTING_ONLY, STR_TMPL_SET_EXISTING_ONLY_TIP),
 			NWidget(WWT_PANEL, COLOUR_GREY, TRW_WIDGET_TMPL_BUTTONS_CONFIG_RIGHTPANEL), SetMinimalSize(12,12), SetResize(1,0), EndContainer(),
 		EndContainer(),
 		// Edit buttons
@@ -386,6 +388,14 @@ public:
 					uint32 template_index = ((this->templates)[selected_template_index])->index;
 
 					DoCommandP(0, template_index, 0, CMD_TOGGLE_TMPL_REPLACE_OLD_ONLY, nullptr);
+				}
+				break;
+			}
+			case TRW_WIDGET_TMPL_BUTTONS_CONFIGTMPL_EXISTING_ONLY: {
+				if ((this->selected_template_index >= 0) && (this->selected_template_index < (short)this->templates.size())) {
+					uint32 template_index = ((this->templates)[selected_template_index])->index;
+
+					DoCommandP(0, template_index, 0, CMD_TOGGLE_TMPL_EXISTINGONLY, nullptr);
 				}
 				break;
 			}
@@ -710,16 +720,19 @@ public:
 			TextColour color;
 
 			color = v->IsSetReuseDepotVehicles() ? TC_LIGHT_BLUE : TC_GREY;
-			DrawString(right - ScaleFontTrad(300), right, bottom_edge, STR_TMPL_CONFIG_USEDEPOT, color, SA_LEFT);
+			DrawString(right - ScaleFontTrad(375), right, bottom_edge, STR_TMPL_CONFIG_USEDEPOT, color, SA_LEFT);
 
 			color = v->IsSetKeepRemainingVehicles() ? TC_LIGHT_BLUE : TC_GREY;
-			DrawString(right - ScaleFontTrad(225), right, bottom_edge, STR_TMPL_CONFIG_KEEPREMAINDERS, color, SA_LEFT);
+			DrawString(right - ScaleFontTrad(300), right, bottom_edge, STR_TMPL_CONFIG_KEEPREMAINDERS, color, SA_LEFT);
 
 			color = v->IsSetRefitAsTemplate() ? TC_LIGHT_BLUE : TC_GREY;
-			DrawString(right - ScaleFontTrad(150), right, bottom_edge, STR_TMPL_CONFIG_REFIT, color, SA_LEFT);
+			DrawString(right - ScaleFontTrad(225), right, bottom_edge, STR_TMPL_CONFIG_REFIT, color, SA_LEFT);
 
 			color = v->IsReplaceOldOnly() ? TC_LIGHT_BLUE : TC_GREY;
-			DrawString(right - ScaleFontTrad(75), right, bottom_edge, STR_TMPL_CONFIG_OLD_ONLY, color, SA_LEFT);
+			DrawString(right - ScaleFontTrad(150), right, bottom_edge, STR_TMPL_CONFIG_OLD_ONLY, color, SA_LEFT);
+
+			color = v->IsSetUseExistingOnly() ? TC_LIGHT_BLUE : TC_GREY;
+			DrawString(right - ScaleFontTrad(75), right, bottom_edge, STR_TMPL_CONFIG_EXISTINGONLY, color, SA_LEFT);
 
 			y += this->bottom_matrix_item_size;
 		}

@@ -208,6 +208,7 @@ CommandProc CmdToggleReuseDepotVehicles;
 CommandProc CmdToggleKeepRemainingVehicles;
 CommandProc CmdToggleRefitAsTemplate;
 CommandProc CmdToggleTemplateReplaceOldOnly;
+CommandProc CmdToggleTemplateExistingOnly;
 
 CommandProc CmdVirtualTrainFromTemplateVehicle;
 CommandProc CmdVirtualTrainFromTrain;
@@ -450,6 +451,7 @@ static const Command _command_proc_table[] = {
 	DEF_CMD(CmdToggleKeepRemainingVehicles,        CMD_ALL_TILES, CMDT_VEHICLE_MANAGEMENT    ), // CMD_TOGGLE_KEEP_REMAINING_VEHICLES
 	DEF_CMD(CmdToggleRefitAsTemplate,              CMD_ALL_TILES, CMDT_VEHICLE_MANAGEMENT    ), // CMD_TOGGLE_REFIT_AS_TEMPLATE
 	DEF_CMD(CmdToggleTemplateReplaceOldOnly,       CMD_ALL_TILES, CMDT_VEHICLE_MANAGEMENT    ), // CMD_TOGGLE_TMPL_REPLACE_OLD_ONLY
+	DEF_CMD(CmdToggleTemplateExistingOnly,         CMD_ALL_TILES, CMDT_VEHICLE_MANAGEMENT    ), // CMD_TOGGLE_TMPL_EXISTINGONLY
 
 	DEF_CMD(CmdVirtualTrainFromTemplateVehicle,   CMD_CLIENT_ID | CMD_NO_TEST | CMD_ALL_TILES, CMDT_VEHICLE_MANAGEMENT), // CMD_VIRTUAL_TRAIN_FROM_TEMPLATE_VEHICLE
 	DEF_CMD(CmdVirtualTrainFromTrain,             CMD_CLIENT_ID | CMD_NO_TEST | CMD_ALL_TILES, CMDT_VEHICLE_MANAGEMENT), // CMD_VIRTUAL_TRAIN_FROM_TRAIN

@@ -7071,6 +7071,7 @@ CommandCost CmdTemplateReplaceVehicle(TileIndex tile, DoCommandFlag flags, uint3
 	/* define replacement behavior */
 	bool reuseDepot = tv->IsSetReuseDepotVehicles();
 	bool keepRemainders = tv->IsSetKeepRemainingVehicles();
+	bool useExistingOnly = tv->IsSetUseExistingOnly();
 
 	if (need_replacement) {
 		// step 1: generate primary for newchain and generate remainder_chain
@@ -7097,7 +7098,7 @@ CommandCost CmdTemplateReplaceVehicle(TileIndex tile, DoCommandFlag flags, uint3
 			if (flags & DC_EXEC) ClearVehicleWindows(tmp_chain);
 			move_cost.AddCost(DoCommand(tile, new_chain->index, INVALID_VEHICLE, flags, CMD_MOVE_RAIL_VEHICLE));
 			remainder_chain = incoming;
-		} else {                                                                                                  // 4
+		} else if(!useExistingOnly) {                                                                                                  // 4
 			tmp_result = DoCommand(tile, eid, 0, flags, CMD_BUILD_VEHICLE);
 			/* break up in case buying the vehicle didn't succeed */
 			if (!tmp_result.Succeeded()) {
@@ -7109,6 +7110,9 @@ CommandCost CmdTemplateReplaceVehicle(TileIndex tile, DoCommandFlag flags, uint3
 			move_cost.AddCost(DoCommand(tile, new_chain->index, INVALID_VEHICLE, flags, CMD_MOVE_RAIL_VEHICLE));
 			/* prepare the remainder chain */
 			remainder_chain = incoming;
+		}else if(useExistingOnly) {
+			if (leaveDepot) incoming->vehstatus &= ~VS_STOPPED;
+			return CommandCost();
 		}
 		// If we bought a new engine or reused one from the depot, copy some parameters from the incoming primary engine
 		if (incoming != new_chain && flags == DC_EXEC) {
@@ -7128,6 +7132,7 @@ CommandCost CmdTemplateReplaceVehicle(TileIndex tile, DoCommandFlag flags, uint3
 		// 1. needed engine might be within remainder_chain already
 		// 2. needed engine might be orphaned within the depot (copy status)
 		// 3. we need to buy (again)                           (copy status)
+		// 4. if buying is not enabled, give up
 		TemplateVehicle *cur_tmpl = tv->GetNextUnit();
 		Train *last_veh = new_chain;
 		while (cur_tmpl) {
@@ -7144,7 +7149,7 @@ CommandCost CmdTemplateReplaceVehicle(TileIndex tile, DoCommandFlag flags, uint3
 				move_cost.AddCost(CmdMoveRailVehicle(tile, flags, tmp_chain->index, last_veh->index, 0));
 			}
 			// 3. must buy new engine
-			else {
+			else if(!useExistingOnly) {
 				tmp_result = DoCommand(tile, cur_tmpl->engine_type, 0, flags, CMD_BUILD_VEHICLE);
 				if (!tmp_result.Succeeded()) {
 					return tmp_result;
@@ -7152,6 +7157,11 @@ CommandCost CmdTemplateReplaceVehicle(TileIndex tile, DoCommandFlag flags, uint3
 				buy.AddCost(tmp_result);
 				tmp_chain = Train::Get(_new_vehicle_id);
 				move_cost.AddCost(CmdMoveRailVehicle(tile, flags, tmp_chain->index, last_veh->index, 0));
+			}
+			// 4. Buy is not enabled, but this is not an error.
+			else if(useExistingOnly) {
+				if (leaveDepot) incoming->vehstatus &= ~VS_STOPPED;
+				return CommandCost();
 			}
 			// TODO: is this enough ? might it be that we bought a new wagon here and it now has std refit ?
 			if (need_refit && flags == DC_EXEC) {
