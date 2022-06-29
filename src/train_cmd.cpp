@@ -7112,7 +7112,7 @@ CommandCost CmdTemplateReplaceVehicle(TileIndex tile, DoCommandFlag flags, uint3
 			remainder_chain = incoming;
 		}else if(useExistingOnly) {
 			if (leaveDepot) incoming->vehstatus &= ~VS_STOPPED;
-			return CommandCost();
+			return CommandCost(STR_ERROR_AUTOREPLACE_NOTHING_TO_DO);
 		}
 		// If we bought a new engine or reused one from the depot, copy some parameters from the incoming primary engine
 		if (incoming != new_chain && flags == DC_EXEC) {
@@ -7158,10 +7158,10 @@ CommandCost CmdTemplateReplaceVehicle(TileIndex tile, DoCommandFlag flags, uint3
 				tmp_chain = Train::Get(_new_vehicle_id);
 				move_cost.AddCost(CmdMoveRailVehicle(tile, flags, tmp_chain->index, last_veh->index, 0));
 			}
-			// 4. Buy is not enabled, but this is not an error.
+			// 4. Buy is not enabled, so fail.
 			else if(useExistingOnly) {
 				if (leaveDepot) incoming->vehstatus &= ~VS_STOPPED;
-				return CommandCost();
+				return CommandCost(STR_ERROR_AUTOREPLACE_NOTHING_TO_DO);
 			}
 			// TODO: is this enough ? might it be that we bought a new wagon here and it now has std refit ?
 			if (need_refit && flags == DC_EXEC) {
